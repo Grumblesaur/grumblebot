@@ -13,33 +13,43 @@ chan = "#limittheory"
 about = "Created by Grumblesaur. Work in progress. Mind the roaches."
 roach = "http://www.homestarrunner.com/sbemail137.html"
 
-def roachwatch(data):
-	if "grumblebot roach" in data:
-		irc.send("PRIVMSG " + chan + " : " + roach + "\r\n")
+commands = {
+	"help" : 0, "save me" : 0, "about" : 1, "info" : 1,
+	"roach" : 2, "cockroach" : 2, "linecount" : 3, "lc" : 3,
+	"quit" : 4, "exit" : 4, "shutdown" : 4, "shut down" : 4,
+	"roll" : 5, "die" : 5, "dice" : 5, "github" : 6, "git" : 6,
+}
 
-def aboutwatch(data):
-	if "grumblebot about" in data:
-		irc.send("PRIVMSG " + chan + " :" + about + "\r\n")
+greetings = {
+	"hi" : 0, "hello" : 0, "sup" : 0, "hey" : 1,
+	"heyaa" : 1
+}
 
-def helpwatch(data):
-	if "grumblebot help" in data:
-		irc.send("PRIVMSG " + chan + " :lc roll hi\r\n")
+def roachwatch():
+	irc.send("PRIVMSG " + chan + " : " + roach + "\r\n")
 
-def linecount(data):
-	if "grumblebot lc" in data or "grumblebot linecount" in data:
-		os.system("linecount grumblebot.py")
-		lines = open("linecount.txt")
-		counter = 0
-		for line in lines:
-			irc.send("PRIVMSG " + chan + " :" + line + "\r\n")
-			counter += 1
-			if counter == 4:
-				return
-			
+def aboutwatch():
+	irc.send("PRIVMSG " + chan + " :" + about + "\r\n")
+
+def helpwatch():
+	irc.send("PRIVMSG " + chan + " :lc roll hi about roach\r\n")
+
+def linecount():
+	os.system("linecount grumblebot.py")
+	lines = open("linecount.txt")
+	counter = 0
+	for line in lines:
+		irc.send("PRIVMSG " + chan + " :" + line + "\r\n")
+		counter += 1
+		if counter == 4:
+			return
+		
+def gitwatch():
+	irc.send("PRIVMSG " + chan + " :http://github.com/Grumblesaur\r\n")
+
 def botwatch(data):	
 	global bottracker
 	global bots
-	data = data.lower()
 	for bot in bots:
 		if bot in data:
 			bottracker += 1
@@ -47,46 +57,35 @@ def botwatch(data):
 				irc.send("PRIVMSG " + chan + " :Do not feed the bots.\r\n")
 
 def rollwatch(data):
-	if "grumblesaur roll" in data:
-		data = data.split()
-		cap = 10
-		for item in data:
-			if item.isdigit() == True:
-				cap = int(item)
-				break
-		if cap == 0:
-			irc.send("PRIVMSG " + chan + "Invalid RNG cap!\r\n")
-			return
-		value = random.randrange(cap) + 1
-		irc.send("PRIVMSG " + chan + " " + str(value) + "\r\n")
+	data = data.split()
+	cap = 10
+	for item in data:
+		if item.isdigit() == True:
+			cap = int(item)
+			break
+	if cap == 0:
+		irc.send("PRIVMSG " + chan + " :Invalid RNG cap!\r\n")
+		return
+	value = random.randrange(cap) + 1
+	irc.send("PRIVMSG " + chan + " " + str(value) + "\r\n")
 
-def quitwatch(data):
-	global irc
-	global chan
-	if "grumblebot quit" in data:
-		irc.send("PRIVMSG " + chan + "Goodbye!\r\n")
-		sys.exit()
+def quitwatch():
+	irc.send("PRIVMSG " + chan + " :Goodbye!\r\n")
+	sys.exit()
 
 def taiyawatch(data):
 	ticket = random.randrange(1053)
 	if "taiya" in data and ticket > 1024:
 		irc.send("PRIVMSG " + chan + " :Good girl, Taiya.\r\n")
+	elif ":v" in data and ticket > 586:
+		irc.send("PRIVMSG " + chan + " : :V\r\n")
 	
-def greetwatch(data):
-	if "hi grumblebot" in data or "hello grumblebot" in data:
+def greetwatch(hi):
+	if hi == 0:
 		irc.send("PRIVMSG " + chan + " :Hello!\r\n")
-	if "hey grumblebot" in data or "heyaa grumblebot" in data:
-		irc.send("PRIVMSG " + chan + " :Hello, probably Talvieno.\r\n")
-	if "yo grumblebot" in data:
-		irc.send("PRIVMSG " + chan + " :Hello, probably Jetison333.\r\n")
-	if "grumblebort" in data:
-		irc.send("PRIVMSG " + chan + " :My name is not 'Grumblebort'!\r\n")
-	if "grundlebot" in data:
-		irc.send("PRIVMSG " + chan + " :'Grundlebot' tain't my name!\r\n")
-	if "damnit" in data or "damn it" in data:
-		irc.send("PRIVMSG " + chan + " :It's 'dammit', there's no 'n'.\r\n")
+	if hi == 1:
+		irc.send("PRIVMSG " + chan + " :Heyo Talvieno!\r\n")
 
-	
 irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 irc.connect((serv, port))
 
@@ -117,15 +116,29 @@ while True:
 		if char in "?.!/;:,()[]{}#$%^&*@!":
 			data = data.replace(char,"")
 	
-	roachwatch(data)
-	aboutwatch(data)
-	greetwatch(data)
-	botwatch(data)			
+	for command in commands:
+		if ("grumblebot " + command) in data:
+			fn = commands[command]
+			if fn == 0:
+				helpwatch()
+			if fn == 1:
+				aboutwatch()
+			if fn == 2:
+				roachwatch()
+			if fn == 3:
+				linecount()
+			if fn == 4:
+				quitwatch()
+			if fn == 5:
+				rollwatch(data)
+			if fn == 6:
+				gitwatch()
+			
+	for greeting in greetings:
+		if (greeting + " grumblebot") in data:
+			hi = greetings[greeting]
+			greetwatch(hi)
+	
 	taiyawatch(data)
-	linecount(data)
-	helpwatch(data)	
-	rollwatch(data)
-	
-	quitwatch(data)
-	
+	botwatch(data)
 		
