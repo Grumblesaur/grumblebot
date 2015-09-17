@@ -5,7 +5,7 @@ import random
 import os
 
 bottracker = 0
-bots = ["taiya", "fwipbot", "goatbot"]
+bots = ["taiya", "goatbot"]
 nick = "grumblebot"
 serv = "irc.gamesurge.net"
 port = 6667
@@ -27,21 +27,26 @@ greetings = {
 
 def roachwatch():
 	irc.send("PRIVMSG " + chan + " : " + roach + "\r\n")
+	sys.stdout.write("\nroachwatch() executed\n\n")
 
 def aboutwatch():
 	irc.send("PRIVMSG " + chan + " :" + about + "\r\n")
+	sys.stdout.write("\naboutwatch() executed\n\n")
 
 def helpwatch():
-	irc.send("PRIVMSG " + chan + " :lc roll hi about roach\r\n")
+	irc.send("PRIVMSG " + chan + " :lc roll hi about roach github\r\n")
+	sys.stdout.write("\nhelpwatch() executed\n\n")
 
 def linecount():
-	os.system("linecount grumblebot.py")
+	target = "~/Programming/self/controlscript/linecount.py grumblebot.py"
+	os.system("python %s" % target) 
 	lines = open("linecount.txt")
 	counter = 0
 	for line in lines:
 		irc.send("PRIVMSG " + chan + " :" + line + "\r\n")
 		counter += 1
 		if counter == 4:
+			sys.stdout.write("\nlinecount() executed\n\n")
 			return
 		
 def gitwatch():
@@ -53,8 +58,10 @@ def botwatch(data):
 	for bot in bots:
 		if bot in data:
 			bottracker += 1
+			sys.stdout.write("\nbottracker incremented\n\n")
 			if bottracker % 25 == 0:
 				irc.send("PRIVMSG " + chan + " :Do not feed the bots.\r\n")
+				sys.stdout.write("\nbotwatch executed\n\n")
 
 def rollwatch(data):
 	data = data.split()
@@ -68,7 +75,8 @@ def rollwatch(data):
 		return
 	value = random.randrange(cap) + 1
 	irc.send("PRIVMSG " + chan + " " + str(value) + "\r\n")
-
+	sys.stdout.write("\nrolled a number\n\n")
+	
 def quitwatch():
 	irc.send("PRIVMSG " + chan + " :Goodbye!\r\n")
 	sys.exit()
@@ -77,14 +85,30 @@ def taiyawatch(data):
 	ticket = random.randrange(1053)
 	if "taiya" in data and ticket > 1024:
 		irc.send("PRIVMSG " + chan + " :Good girl, Taiya.\r\n")
+		sys.stdout.write("\ncomplimented taiya\n\n")
 	elif ":v" in data and ticket > 586:
 		irc.send("PRIVMSG " + chan + " : :V\r\n")
+		sys.stdout.write("\n:V\n\n")
 	
 def greetwatch(hi):
 	if hi == 0:
 		irc.send("PRIVMSG " + chan + " :Hello!\r\n")
+		sys.stdout.write("\ngreeted user\n\n")
 	if hi == 1:
 		irc.send("PRIVMSG " + chan + " :Heyo Talvieno!\r\n")
+		sys.stdout.write("\ngreeted talvieno\n\n")
+
+def typowatch(data):
+	if "grumblebort" in data:
+		irc.send("PRIVMSG " + chan + " :My name is not 'Grumblebort!'\r\n")
+		sys.stdout.write("\ngrumblebort\n\n")
+	if "grundlebot" in data:
+		irc.send("PRIVMSG " + chan + " :'Grundlebot' tain't my name!\r\n")
+		sys.stdout.write("\ngrundlebot\n\n")
+	if "damn it" in data or "damnit" in data:
+		irc.send("PRIVMSG " + chan + " :It's 'dammit', dammit!\r\n")
+		sys.stdout.write("\ndammit\n\n")
+	
 
 irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 irc.connect((serv, port))
@@ -141,4 +165,5 @@ while True:
 	
 	taiyawatch(data)
 	botwatch(data)
+	typowatch(data)
 		
