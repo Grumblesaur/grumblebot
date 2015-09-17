@@ -47,17 +47,18 @@ def botwatch(data):
 				irc.send("PRIVMSG " + chan + " :Do not feed the bots.\r\n")
 
 def rollwatch(data):
-	data = data.split()
-	cap = 10
-	for item in data:
-		if item.isdigit() == True:
-			cap = int(item)
-			break
-	if cap == 0:
-		irc.send("PRIVMSG " + chan + "Invalid RNG cap!\r\n")
-		return
-	value = random.randrange(cap) + 1
-	irc.send("PRIVMSG " + chan + " " + str(value) + "\r\n")
+	if "grumblesaur roll" in data:
+		data = data.split()
+		cap = 10
+		for item in data:
+			if item.isdigit() == True:
+				cap = int(item)
+				break
+		if cap == 0:
+			irc.send("PRIVMSG " + chan + "Invalid RNG cap!\r\n")
+			return
+		value = random.randrange(cap) + 1
+		irc.send("PRIVMSG " + chan + " " + str(value) + "\r\n")
 
 def quitwatch(data):
 	global irc
@@ -115,14 +116,15 @@ while True:
 	for char in data:
 		if char in "?.!/;:,()[]{}#$%^&*@!":
 			data = data.replace(char,"")
-
+	
+	roachwatch(data)
+	aboutwatch(data)
 	greetwatch(data)
 	botwatch(data)			
 	taiyawatch(data)
 	linecount(data)
 	helpwatch(data)	
-	if data.find("grumblebot roll") != -1:
-		rollwatch(data)
+	rollwatch(data)
 	
 	quitwatch(data)
 	
