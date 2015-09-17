@@ -19,7 +19,7 @@ def roachwatch(data):
 
 def aboutwatch(data):
 	if "grumblebot about" in data:
-		irc.send("PRIVMSG " + chan " :" + about + "\r\n")
+		irc.send("PRIVMSG " + chan + " :" + about + "\r\n")
 
 def helpwatch(data):
 	if "grumblebot help" in data:
