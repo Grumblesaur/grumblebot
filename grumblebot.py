@@ -3,6 +3,7 @@ import sys
 import time
 import random
 import os
+import time
 
 bottracker = 0
 bots = ["taiya", "goatbot"]
@@ -24,6 +25,32 @@ greetings = {
 	"hi" : 0, "hello" : 0, "sup" : 0, "hey" : 1,
 	"heyaa" : 1
 }
+
+memes = [
+	":squirrel:", ":ghost:", "clever girl", "goatbot time",
+	"grumblebot roll 100000000000000000000000000000000000",
+	"get random quote", "LT is coming out Soon(TM)",
+	"Why don't you post about it in the suggestion forums?",
+	"If you wish to live and thrive, burn the spider, let it die.",
+	"This message doesn't appear very often.", ":V", "\o/", "o/",
+	"memefountain() executed successfully", "http://forums.ltheory.com/",
+	"This list of strings is really clogging up the data segment.",
+	"Don't mind me, I don't kilobyte.", "http://xkcd.com/221",
+]
+
+def memefountain():
+	prob = random.randrange(65535)
+	sys.stdout.write("prob in memefountain is %d\n" %prob)
+	if prob > 63525:
+		meme = memes[random.randrange(len(memes))]
+		irc.send("PRIVMSG " + chan + " :" + meme + "\r\n")
+		sys.stdout.write("\nmemefountain() executed successfully.\n\n")
+
+def duckwatch(data):
+	ticket = random.randrange(1053)
+	if ":v" in data and ticket > 789:
+		irc.send("PRIVMSG " + chan + " ::V\r\n")
+		sys.stdout.write("\n:V\n\n")
 
 def roachwatch():
 	irc.send("PRIVMSG " + chan + " : " + roach + "\r\n")
@@ -79,16 +106,16 @@ def rollwatch(data):
 	
 def quitwatch():
 	irc.send("PRIVMSG " + chan + " :Goodbye!\r\n")
-	sys.exit()
+	os._exit(0)
 
 def taiyawatch(data):
 	ticket = random.randrange(1053)
 	if "taiya" in data and ticket > 1024:
 		irc.send("PRIVMSG " + chan + " :Good girl, Taiya.\r\n")
 		sys.stdout.write("\ncomplimented taiya\n\n")
-	elif ":v" in data and ticket > 586:
-		irc.send("PRIVMSG " + chan + " : :V\r\n")
-		sys.stdout.write("\n:V\n\n")
+	if "goatbot" in data and ticket < 30:
+		irc.send("PRIVMSG " + chan + " :Goatbot what?\r\n")
+		sys.stdout.write("\npoked goatbot\n\n")
 	
 def greetwatch(hi):
 	if hi == 0:
@@ -109,10 +136,11 @@ def typowatch(data):
 		irc.send("PRIVMSG " + chan + " :It's 'dammit', dammit!\r\n")
 		sys.stdout.write("\ndammit\n\n")
 	
-
+# procedure start
 irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 irc.connect((serv, port))
 
+# connect to IRC
 irc.recv(4096)
 irc.send("NICK " + nick + "\r\n")
 irc.send("USER " + nick + " " + nick + " " + nick + ":Grumblesaur IRC\r\n")
@@ -122,24 +150,30 @@ irc.send("PRIVMSG " + chan + " :Hello.\r\n")
 connected = False
 
 while True:
+	# ping when requested
 	data = irc.recv(512)
 	sys.stdout.write(str(data))
 	if data.find("PING") != -1:
 		irc.send("PONG " + data.split()[1] + "\r\n")
-	
+
+	# ensure that we are in the channel
 	if connected == False:
 		irc.send("JOIN " + chan + "\r\n")
-	
 	if "@Bele" in data:
 		connected = True
 		sys.stdout.write("Connected.\n")
 		irc.send("PRIVMSG " + chan + " :Hello LT IRC!\r\n")
 	
+	# make data readable to grumblebot
 	data = data.lower()
+	duckwatch(data)
 	for char in data:
 		if char in "?.!/;:,()[]{}#$%^&*@!":
 			data = data.replace(char,"")
+		if char in '"':
+			data = data.replace(char,"")
 	
+	# scan newest message for command
 	for command in commands:
 		if ("grumblebot " + command) in data:
 			fn = commands[command]
@@ -158,12 +192,20 @@ while True:
 			if fn == 6:
 				gitwatch()
 			
+	# scan newest message for greeting
 	for greeting in greetings:
 		if (greeting + " grumblebot") in data:
 			hi = greetings[greeting]
 			greetwatch(hi)
 	
+	# interact with taiya or silverware
 	taiyawatch(data)
+
+	# monitor amount of bot activity
 	botwatch(data)
+	
+	# scold users for certain typos
 	typowatch(data)
-		
+	
+	# output phrases at random
+	memefountain()		
