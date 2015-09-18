@@ -6,7 +6,7 @@ import os
 import time
 
 bottracker = 0
-bots = ["taiya", "goatbot"]
+bots = ["taiya", "goatbot", "bentley"]
 nick = "grumblebot"
 serv = "irc.gamesurge.net"
 port = 6667
@@ -37,6 +37,11 @@ memes = [
 	"This list of strings is really clogging up the data segment.",
 	"Don't mind me, I don't kilobyte.", "http://xkcd.com/221",
 ]
+
+def rektwatch(data):
+	if "get rekt" in data:
+		irc.send("PRIVMSG " + chan + " :turbo nerd\r\n")
+		sys.stdout.write("nerd got #rekt")
 
 def memefountain():
 	prob = random.randrange(65535)
@@ -98,7 +103,7 @@ def rollwatch(data):
 			cap = int(item)
 			break
 	if cap == 0:
-		irc.send("PRIVMSG " + chan + " :Invalid RNG cap!\r\n")
+		irc.send("PRIVMSG " + chan + " :No zero-sided dice, nerdo.\r\n")
 		return
 	value = random.randrange(cap) + 1
 	irc.send("PRIVMSG " + chan + " " + str(value) + "\r\n")
@@ -208,4 +213,7 @@ while True:
 	typowatch(data)
 	
 	# output phrases at random
-	memefountain()		
+	memefountain()	
+	
+	# rek the nerds	
+	rektwatch(data)

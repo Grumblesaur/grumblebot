@@ -1,9 +1,9 @@
-216 lines in file 'grumblebot.py'.
-175 lines of code.
+211 lines in file 'grumblebot.py'.
+171 lines of code.
 11 lines of comments.
-30 lines of whitespace.
+29 lines of whitespace.
 
-216 lines in files overall.
-175 lines of code.
+211 lines in files overall.
+171 lines of code.
 11 lines of comments.
-30 lines of whitespace.
+29 lines of whitespace.
