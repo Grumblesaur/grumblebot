@@ -60,7 +60,7 @@ def rektwatch(data):
 def memefountain():
 	prob = random.randrange(65535)
 	log("prob in memefountain is %d\n" %prob)
-	if prob > 63525:
+	if prob > 63525 and prob % 2 == 0:
 		meme = memes[random.randrange(len(memes))]
 		say(irc, chan, meme)
 		log("\nmemefountain() executed successfully.\n\n")
