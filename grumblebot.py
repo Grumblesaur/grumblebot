@@ -3,10 +3,10 @@ import sys
 import time
 import random
 import os
-import time
 
+# constants
 bottracker = 0
-bots = ["taiya", "goatbot", "bentley"]
+bots = ["taiya", "goatbot", "bentley", "flatbot", "cha0zzbot", "saoirse"]
 nick = "grumblebot"
 serv = "irc.gamesurge.net"
 port = 6667
@@ -14,6 +14,7 @@ chan = "#limittheory"
 about = "Created by Grumblesaur. Work in progress. Mind the roaches."
 roach = "http://www.homestarrunner.com/sbemail137.html"
 
+# things grumblebot understands
 commands = {
 	"help" : 0, "save me" : 0, "about" : 1, "info" : 1,
 	"roach" : 2, "cockroach" : 2, "linecount" : 3, "lc" : 3,
@@ -26,6 +27,7 @@ greetings = {
 	"heyaa" : 1
 }
 
+# things grumblebot will occasionally say
 memes = [
 	":squirrel:", ":ghost:", "clever girl", "goatbot time",
 	"grumblebot roll 100000000000000000000000000000000000",
@@ -35,39 +37,51 @@ memes = [
 	"This message doesn't appear very often.", ":V", "\o/", "o/",
 	"memefountain() executed successfully", "http://forums.ltheory.com/",
 	"This list of strings is really clogging up the data segment.",
-	"Don't mind me, I don't kilobyte.", "http://xkcd.com/221",
+	"Don't mind me, I don't kilobyte.", "Read the FAQ!",
+	"We have a search function, you know.",
 ]
 
+# alias the console-out function to a shorter name
+log = sys.stdout.write
+
+# make messaging way less of a pain in the ass
+def say(irc, chan,  message):
+	irc.send("PRIVMSG %s :%s\r\n" %(chan, message))
+	
 def rektwatch(data):
 	if "get rekt" in data:
-		irc.send("PRIVMSG " + chan + " :turbo nerd\r\n")
-		sys.stdout.write("nerd got #rekt")
+		say(irc, chan, "turbo nerd")
+		log("nerd got #rekt")
 
 def memefountain():
 	prob = random.randrange(65535)
-	sys.stdout.write("prob in memefountain is %d\n" %prob)
+	log("prob in memefountain is %d\n" %prob)
 	if prob > 63525:
 		meme = memes[random.randrange(len(memes))]
-		irc.send("PRIVMSG " + chan + " :" + meme + "\r\n")
-		sys.stdout.write("\nmemefountain() executed successfully.\n\n")
-
+		say(irc, chan, meme)
+		log("\nmemefountain() executed successfully.\n\n")
+	elif prob < 175:
+		number = random.randrange(1579)
+		say(irc, chan, "http://xkcd.com/%s/" %number)
+		log("\nsent xkcd link\n\n")
+	
 def duckwatch(data):
 	ticket = random.randrange(1053)
 	if ":v" in data and ticket > 789:
-		irc.send("PRIVMSG " + chan + " ::V\r\n")
-		sys.stdout.write("\n:V\n\n")
+		say(irc, chan, ":V\r\n")
+		log("\n:V\n\n")
 
 def roachwatch():
-	irc.send("PRIVMSG " + chan + " : " + roach + "\r\n")
-	sys.stdout.write("\nroachwatch() executed\n\n")
+	say(irc, chan, roach)
+	log("\nroachwatch() executed\n\n")
 
 def aboutwatch():
-	irc.send("PRIVMSG " + chan + " :" + about + "\r\n")
-	sys.stdout.write("\naboutwatch() executed\n\n")
+	say(irc, chan, about)
+	log("\naboutwatch() executed\n\n")
 
 def helpwatch():
-	irc.send("PRIVMSG " + chan + " :lc roll hi about roach github\r\n")
-	sys.stdout.write("\nhelpwatch() executed\n\n")
+	say(irc, chan, "lc roll hi about roach github\r\n")
+	log("\nhelpwatch() executed\n\n")
 
 def linecount():
 	target = "~/Programming/self/controlscript/linecount.py grumblebot.py"
@@ -75,14 +89,14 @@ def linecount():
 	lines = open("linecount.txt")
 	counter = 0
 	for line in lines:
-		irc.send("PRIVMSG " + chan + " :" + line + "\r\n")
+		say(irc, chan, line)
 		counter += 1
 		if counter == 4:
-			sys.stdout.write("\nlinecount() executed\n\n")
+			log("\nlinecount() executed\n\n")
 			return
 		
 def gitwatch():
-	irc.send("PRIVMSG " + chan + " :http://github.com/Grumblesaur\r\n")
+	say(irc, chan, "http://github.com/Grumblesaur")
 
 def botwatch(data):	
 	global bottracker
@@ -90,10 +104,10 @@ def botwatch(data):
 	for bot in bots:
 		if bot in data:
 			bottracker += 1
-			sys.stdout.write("\nbottracker incremented\n\n")
-			if bottracker % 25 == 0:
-				irc.send("PRIVMSG " + chan + " :Do not feed the bots.\r\n")
-				sys.stdout.write("\nbotwatch executed\n\n")
+			log("\nbottracker incremented\n\n")
+			if bottracker % 32 == 0:
+				say(irc, chan, "Do not feed the bots.")
+				log("\nbotwatch executed\n\n")
 
 def rollwatch(data):
 	data = data.split()
@@ -103,43 +117,61 @@ def rollwatch(data):
 			cap = int(item)
 			break
 	if cap == 0:
-		irc.send("PRIVMSG " + chan + " :No zero-sided dice, nerdo.\r\n")
+		say(irc, chan, "No zero-sided dice, nerdo.")
 		return
 	value = random.randrange(cap) + 1
-	irc.send("PRIVMSG " + chan + " " + str(value) + "\r\n")
-	sys.stdout.write("\nrolled a number\n\n")
+	say(irc, chan, str(value))
+	log("\nrolled a number\n\n")
 	
 def quitwatch():
-	irc.send("PRIVMSG " + chan + " :Goodbye!\r\n")
+	say(irc, chan, "Goodbye!")
 	os._exit(0)
 
-def taiyawatch(data):
+def pokewatch(data):
 	ticket = random.randrange(1053)
+	
+	#TODO: add randomized phrases for each bot
+	
 	if "taiya" in data and ticket > 1024:
-		irc.send("PRIVMSG " + chan + " :Good girl, Taiya.\r\n")
-		sys.stdout.write("\ncomplimented taiya\n\n")
+		say(irc, chan, "Good girl, Taiya.")
+		log("\ncomplimented taiya\n\n")
 	if "goatbot" in data and ticket < 30:
-		irc.send("PRIVMSG " + chan + " :Goatbot what?\r\n")
-		sys.stdout.write("\npoked goatbot\n\n")
+		say(irc, chan, "Goatbot what?\r\n")
+		log("\npoked goatbot\n\n")
+	#TODO: add to these later
+	if "saoirse" in data and ticket > 30 and ticket < 70:
+		pass
+	if "flatbot" in data and ticket > 70 and ticket < 110:
+		pass
+	if "cha0zzbot" in data and ticket > 110 and ticket < 150:
+		pass
+	if "bentley" in data and ticket > 150 and ticket < 190:
+		pass
 	
 def greetwatch(hi):
 	if hi == 0:
-		irc.send("PRIVMSG " + chan + " :Hello!\r\n")
-		sys.stdout.write("\ngreeted user\n\n")
+		say(irc, chan, "Hello!")
+		log("\ngreeted user\n\n")
 	if hi == 1:
-		irc.send("PRIVMSG " + chan + " :Heyo Talvieno!\r\n")
-		sys.stdout.write("\ngreeted talvieno\n\n")
+		say(irc, chan, "Heyo Talvieno!")
+		log("\ngreeted talvieno\n\n")
 
 def typowatch(data):
 	if "grumblebort" in data:
-		irc.send("PRIVMSG " + chan + " :My name is not 'Grumblebort!'\r\n")
-		sys.stdout.write("\ngrumblebort\n\n")
+		if "goatbot" in data:
+			say(irc, chan, "Shut up, Goatbot!")
+		else:
+			say(irc, chan, "My name is not 'Grumblebort!'")
+
+		log("\ngrumblebort\n\n")
+
 	if "grundlebot" in data:
-		irc.send("PRIVMSG " + chan + " :'Grundlebot' tain't my name!\r\n")
-		sys.stdout.write("\ngrundlebot\n\n")
+		say(irc, chan, "'Grundlebot' tain't my name!")
+		log("\ngrundlebot\n\n")
+
 	if "damn it" in data or "damnit" in data:
-		irc.send("PRIVMSG " + chan + " :It's 'dammit', dammit!\r\n")
-		sys.stdout.write("\ndammit\n\n")
+		say(irc, chan,"It's 'dammit', dammit!")
+		log("\ndammit\n\n")
 	
 # procedure start
 irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -157,14 +189,14 @@ connected = False
 while True:
 	# ping when requested
 	data = irc.recv(512)
-	sys.stdout.write(str(data))
+	log(str(data))
 	if data.find("PING") != -1:
 		irc.send("PONG " + data.split()[1] + "\r\n")
 
 	# ensure that we are in the channel
 	if connected == False:
 		irc.send("JOIN " + chan + "\r\n")
-	if "@Bele" in data:
+	if "@" in data and connected == False:
 		connected = True
 		sys.stdout.write("Connected.\n")
 		irc.send("PRIVMSG " + chan + " :Hello LT IRC!\r\n")
@@ -203,8 +235,8 @@ while True:
 			hi = greetings[greeting]
 			greetwatch(hi)
 	
-	# interact with taiya or silverware
-	taiyawatch(data)
+	# interact with other bots
+	pokewatch(data)
 
 	# monitor amount of bot activity
 	botwatch(data)
