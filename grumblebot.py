@@ -13,6 +13,7 @@ port = 6667
 chan = "#limittheory"
 about = "Created by Grumblesaur. Work in progress. Mind the roaches."
 roach = "http://www.homestarrunner.com/sbemail137.html"
+faq = "http://forums.ltheory.com/viewtopic.php?p=5470&f=11#p5470"
 
 # things grumblebot understands
 commands = {
@@ -20,6 +21,7 @@ commands = {
 	"roach" : 2, "cockroach" : 2, "linecount" : 3, "lc" : 3,
 	"quit" : 4, "exit" : 4, "shutdown" : 4, "shut down" : 4,
 	"roll" : 5, "die" : 5, "dice" : 5, "github" : 6, "git" : 6,
+	"faq" : 7,
 }
 
 greetings = {
@@ -168,7 +170,7 @@ def pokewatch(data):
 	if bot == "default":
 		memefountain()
 	else:
-		say(irc, chan, botwords[bot][ticket % len(botwords[bot])
+		say(irc, chan, botwords[bot][ticket % len(botwords[bot])])
 		log("\npoked bot %s\n\n" % bot)
 
 # greet users	
@@ -198,6 +200,10 @@ def typowatch(data):
 		say(irc, chan,"It's 'dammit', dammit!")
 		log("\ndammit\n\n")
 	
+def faqwatch():
+	say(irc, chan, faq)
+	log("\nfaq'd\n\n")
+
 ## procedure start ##
 irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 irc.connect((serv, port))
@@ -253,6 +259,8 @@ while True:
 				rollwatch(data)
 			if fn == 6:
 				gitwatch()
+			if fn == 7:
+				faqwatch()
 			
 	# scan newest message for greeting
 	for greeting in greetings:
