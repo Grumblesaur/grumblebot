@@ -139,29 +139,37 @@ def quitwatch():
 	say(irc, chan, "Goodbye!")
 	os._exit(0)
 
+botwords = {
+	"taiya": ["Good girl Taiya", "Thanks Taiya", "Hi Taiya", "Clever girl"],
+	"goatbot": ["Goatbot time", "Goatbot state", "Goatbot help"],
+	"bentley": ["Hi Bentley!"],
+	"saoirse": ["Hi Saoirse!"],
+	"flatbot": ["Hi Flatbot!"],
+	"cha0zzbot": ["Hi Cha0zzbot!"],
+}
+
 # poke other bots occasionally
 def pokewatch(data):
-	ticket = random.randrange(1053)
+	ticket = random.randrange(992)
+	bot = "default"
 	
-	#TODO: add randomized phrases for each bot
-	
-	if "taiya" in data and ticket > 1024:
-		say(irc, chan, "Good girl, Taiya.")
-		log("\ncomplimented taiya\n\n")
-	if "goatbot" in data and ticket < 30:
-		say(irc, chan, "Goatbot what?\r\n")
-		log("\npoked goatbot\n\n")
-
-	#TODO: add to these later
-
-	if "saoirse" in data and ticket > 30 and ticket < 70:
-		pass
-	if "flatbot" in data and ticket > 70 and ticket < 110:
-		pass
-	if "cha0zzbot" in data and ticket > 110 and ticket < 150:
-		pass
-	if "bentley" in data and ticket > 150 and ticket < 190:
-		pass
+	if "taiya" in data and ticket < 35:
+		bot = "taiya"
+	if "goatbot" in data and ticket >= 35 and ticket < 70:
+		bot = "goatbot"
+	if "saoirse" in data and ticket >= 70 and ticket < 105:
+		bot = "saoirse"
+	if "flatbot" in data and ticket >= 105 and ticket < 140:
+		bot = "flatbot"
+	if "cha0zzbot" in data and ticket >= 140 and ticket < 175:
+		bot = "cha0zzbot"
+	if "bentley" in data and ticket >= 175 and ticket < 210:
+		bot = "bentley"
+	if bot == "default":
+		memefountain()
+	else:
+		say(irc, chan, botwords[bot][ticket % len(botwords[bot])
+		log("\npoked bot %s\n\n" % bot)
 
 # greet users	
 def greetwatch(hi):
