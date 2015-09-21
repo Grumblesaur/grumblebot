@@ -47,12 +47,14 @@ log = sys.stdout.write
 # make messaging way less of a pain in the ass
 def say(irc, chan,  message):
 	irc.send("PRIVMSG %s :%s\r\n" %(chan, message))
-	
+
+# simple call-and-response test function / easter egg
 def rektwatch(data):
 	if "get rekt" in data:
 		say(irc, chan, "turbo nerd")
 		log("nerd got #rekt")
 
+# say something at random
 def memefountain():
 	prob = random.randrange(65535)
 	log("prob in memefountain is %d\n" %prob)
@@ -64,25 +66,30 @@ def memefountain():
 		number = random.randrange(1579)
 		say(irc, chan, "http://xkcd.com/%s/" %number)
 		log("\nsent xkcd link\n\n")
-	
+
+# mock silverware with imitation
 def duckwatch(data):
 	ticket = random.randrange(1053)
 	if ":v" in data and ticket > 789:
 		say(irc, chan, ":V\r\n")
 		log("\n:V\n\n")
 
+# link to h*r for no good reason
 def roachwatch():
 	say(irc, chan, roach)
 	log("\nroachwatch() executed\n\n")
 
+# talk about yourself
 def aboutwatch():
 	say(irc, chan, about)
 	log("\naboutwatch() executed\n\n")
 
+# list commands
 def helpwatch():
 	say(irc, chan, "lc roll hi about roach github\r\n")
 	log("\nhelpwatch() executed\n\n")
 
+# count your lines of code
 def linecount():
 	target = "~/Programming/self/controlscript/linecount.py grumblebot.py"
 	os.system("python %s" % target) 
@@ -94,10 +101,12 @@ def linecount():
 		if counter == 4:
 			log("\nlinecount() executed\n\n")
 			return
-		
+
+# link to github
 def gitwatch():
 	say(irc, chan, "http://github.com/Grumblesaur")
 
+# warn users about excessive bot use
 def botwatch(data):	
 	global bottracker
 	global bots
@@ -109,6 +118,7 @@ def botwatch(data):
 				say(irc, chan, "Do not feed the bots.")
 				log("\nbotwatch executed\n\n")
 
+# respond to dice roll commands
 def rollwatch(data):
 	data = data.split()
 	cap = 10
@@ -117,16 +127,19 @@ def rollwatch(data):
 			cap = int(item)
 			break
 	if cap == 0:
+		# tell abusers to fuck off
 		say(irc, chan, "No zero-sided dice, nerdo.")
 		return
 	value = random.randrange(cap) + 1
 	say(irc, chan, str(value))
 	log("\nrolled a number\n\n")
 	
+# quit when instructed
 def quitwatch():
 	say(irc, chan, "Goodbye!")
 	os._exit(0)
 
+# poke other bots occasionally
 def pokewatch(data):
 	ticket = random.randrange(1053)
 	
@@ -138,7 +151,9 @@ def pokewatch(data):
 	if "goatbot" in data and ticket < 30:
 		say(irc, chan, "Goatbot what?\r\n")
 		log("\npoked goatbot\n\n")
+
 	#TODO: add to these later
+
 	if "saoirse" in data and ticket > 30 and ticket < 70:
 		pass
 	if "flatbot" in data and ticket > 70 and ticket < 110:
@@ -147,7 +162,8 @@ def pokewatch(data):
 		pass
 	if "bentley" in data and ticket > 150 and ticket < 190:
 		pass
-	
+
+# greet users	
 def greetwatch(hi):
 	if hi == 0:
 		say(irc, chan, "Hello!")
@@ -156,6 +172,7 @@ def greetwatch(hi):
 		say(irc, chan, "Heyo Talvieno!")
 		log("\ngreeted talvieno\n\n")
 
+# scold careless users
 def typowatch(data):
 	if "grumblebort" in data:
 		if "goatbot" in data:
@@ -173,7 +190,7 @@ def typowatch(data):
 		say(irc, chan,"It's 'dammit', dammit!")
 		log("\ndammit\n\n")
 	
-# procedure start
+## procedure start ##
 irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 irc.connect((serv, port))
 
