@@ -6,7 +6,7 @@ import os
 
 # constants
 bottracker = 0
-bots = ["taiya", "goatbot", "bentley", "flatbot", "cha0zzbot", "saoirse"]
+bots = ["taiya", "goatbot", "bentley", "flatbot", "jimmy", "saoirse"]
 nick = "grumblebot"
 serv = "irc.gamesurge.net"
 port = 6667
@@ -60,7 +60,7 @@ def rektwatch(data):
 def memefountain():
 	prob = random.randrange(65535)
 	log("prob in memefountain is %d\n" %prob)
-	if prob > 63525 and prob % 2 == 0:
+	if prob > 64525 and prob % 2 == 0:
 		meme = memes[random.randrange(len(memes))]
 		say(irc, chan, meme)
 		log("\nmemefountain() executed successfully.\n\n")
@@ -157,21 +157,21 @@ def pokewatch(data):
 	
 	if "taiya" in data and ticket < 35:
 		bot = "taiya"
-	if "goatbot" in data and ticket >= 35 and ticket < 70:
+	elif "goatbot" in data and ticket >= 35 and ticket < 70:
 		bot = "goatbot"
-	if "saoirse" in data and ticket >= 70 and ticket < 105:
+	elif "saoirse" in data and ticket >= 70 and ticket < 105:
 		bot = "saoirse"
-	if "flatbot" in data and ticket >= 105 and ticket < 140:
+	elif "flatbot" in data and ticket >= 105 and ticket < 140:
 		bot = "flatbot"
-	if "cha0zzbot" in data and ticket >= 140 and ticket < 175:
+	elif "cha0zzbot" in data and ticket >= 140 and ticket < 175:
 		bot = "cha0zzbot"
-	if "bentley" in data and ticket >= 175 and ticket < 210:
+	elif "bentley" in data and ticket >= 175 and ticket < 210:
 		bot = "bentley"
-	if bot == "default":
+	elif bot == "default":
 		memefountain()
-	else:
-		say(irc, chan, botwords[bot][ticket % len(botwords[bot])])
-		log("\npoked bot %s\n\n" % bot)
+	
+	say(irc, chan, botwords[bot][ticket % len(botwords[bot])])
+	log("\npoked bot %s\n\n" % bot)
 
 # greet users	
 def greetwatch(hi):
@@ -184,21 +184,23 @@ def greetwatch(hi):
 
 # scold careless users
 def typowatch(data):
-	if "grumblebort" in data:
-		if "goatbot" in data:
-			say(irc, chan, "Shut up, Goatbot!")
-		else:
-			say(irc, chan, "My name is not 'Grumblebort!'")
-
-		log("\ngrumblebort\n\n")
-
-	if "grundlebot" in data:
-		say(irc, chan, "'Grundlebot' tain't my name!")
-		log("\ngrundlebot\n\n")
-
-	if "damn it" in data or "damnit" in data:
-		say(irc, chan,"It's 'dammit', dammit!")
-		log("\ndammit\n\n")
+	prob = random.randrange(2000)
+	if prob < 20:
+		if "grumblebort" in data:
+			if "goatbot" in data:
+				say(irc, chan, "Shut up, Goatbot!")
+			else:
+				say(irc, chan, "My name is not 'Grumblebort!'")
+	
+			log("\ngrumblebort\n\n")
+	
+		elif "grundlebot" in data:
+			say(irc, chan, "'Grundlebot' tain't my name!")
+			log("\ngrundlebot\n\n")
+	
+		elif "damn it" in data or "damnit" in data:
+			say(irc, chan,"It's 'dammit', dammit!")
+			log("\ndammit\n\n")
 	
 def faqwatch():
 	say(irc, chan, faq)
